@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using TechnicalTask.Models;
 
-namespace TechnicalTask.Tests
+namespace TechnicalTask.Tests.IntegrationTests
 {
     public class MessageTests : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -26,12 +26,9 @@ namespace TechnicalTask.Tests
             var expectedOutput = $"[Id] {message.Id}, [Date] {message.Date}, [Message] {message.TextContent}";
             var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Add("x-api-key", "3c395e34-60ef-433d-b681-b11acffb1f89");
-
             // Act
             var response = await _httpClient.PostAsync("/api/Message/", content);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(responseContent);
@@ -53,12 +50,10 @@ namespace TechnicalTask.Tests
             var expectedOutput = $"[Id] {message.Id}, [Date] {message.Date}, [Message] {message.TextContent}";
             var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Add("x-api-key", "3c395e34-60ef-433d-b681-b11acffb1f89");
-
             // Act
             var response = await _httpClient.PostAsync("/api/Message/", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             var errorMessages = JsonConvert.DeserializeObject<HttpValidationProblemDetails>(responseContent)?.Errors.SelectMany(x => x.Value).ToList() ?? [];
-
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.NotNull(responseContent);
@@ -73,12 +68,9 @@ namespace TechnicalTask.Tests
             var expectedOutput = "Api Key was not provided.";
             var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Add("x-api-key", "");
-
             // Act
             var response = await _httpClient.PostAsync("/api/Message/", content);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.NotNull(responseContent);
@@ -93,12 +85,9 @@ namespace TechnicalTask.Tests
             var expectedOutput = "Unauthorized client.";
             var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
             _httpClient.DefaultRequestHeaders.Add("x-api-key", "asdf");
-
             // Act
             var response = await _httpClient.PostAsync("/api/Message/", content);
             var responseContent = await response.Content.ReadAsStringAsync();
-
-
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.NotNull(responseContent);

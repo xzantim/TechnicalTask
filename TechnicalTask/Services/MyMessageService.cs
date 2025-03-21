@@ -14,9 +14,7 @@ namespace TechnicalTask.Services
 
                 var logAsString = $"[Id] {log.Id}, [Date] {log.Date}, [Message] {log.TextContent}";
                 await File.AppendAllTextAsync(PATH, Environment.NewLine + logAsString);
-
                 return logAsString;
-
             }
             catch (IOException ex)
             {
